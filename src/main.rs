@@ -84,8 +84,17 @@ impl iced::Application for ChefApp {
             ChefApp::Loaded(state) => {
                 let mut saved = false;
 
-                //---
-                let command = Command::none();
+                let command = match message {
+                    AppMessage::Loaded(_) => Command::none(),
+                    AppMessage::Saved(_result) => {
+                        state.saving = false;
+                        saved = true;
+                        Command::none()
+                    }
+                    AppMessage::InventoryMessage(affected, message) => {
+                        todo!()
+                    }
+                };
 
                 if !saved {
                     state.dirty = true;

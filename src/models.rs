@@ -1,6 +1,15 @@
 use uuid::Uuid;
 use serde::{Deserialize, Serialize};
+use crate::states::InventoryState;
 
+#[derive(Debug, Default, Serialize, Deserialize)]
+pub struct Inventory {
+    food: Vec<Food>,
+    recipes: Vec<Recipe>,
+    portions: Vec<Portion>,
+    #[serde(skip)]
+    state: InventoryState,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Food {

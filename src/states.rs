@@ -9,3 +9,9 @@ pub struct AppState {
     pub dirty: bool,
     pub saving: bool
 }
+
+#[derive(Default, Debug, Clone)]
+pub enum InventoryState {
+    #[default] Idle,
+    EditingFood,
+}

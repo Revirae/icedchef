@@ -7,6 +7,7 @@ use iced::widget::{
 use iced::{
     Alignment, Command, Element, Length
 };
+use uuid::Uuid;
 use crate::persistence::InventoryPersistence;
 use crate::errors::{LoadError, SaveError};
 
@@ -14,8 +15,13 @@ use crate::errors::{LoadError, SaveError};
 pub enum AppMessage {
     Loaded(Result<InventoryPersistence, LoadError>),
     Saved(Result<(), SaveError>),
+    InventoryMessage(Vec<Uuid>, InventoryMessage),
 }
 
+#[derive(Debug, Clone)]
+pub enum InventoryMessage {
+    Delete,
+}
 pub fn loading_message<'a>()
     -> Element<'a, AppMessage> {
         container(
