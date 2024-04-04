@@ -1,27 +1,16 @@
-#![allow(unused)]
+// #![allow(unused)]
 mod states;
 mod models;
 mod persistence;
 mod messages;
 mod errors;
 
-use iced::advanced::Text;
-use iced::widget::{
-    text, text_input,
-    button,
-    column, row, container
-};
-use iced::{alignment, executor, keyboard, window};
-use iced::widget::Column;
 use iced::{
-    Alignment, Command, Element,
-    Length, Subscription,
-    Application, Settings, Theme
+    Command, Element,
+    Application, Settings
 };
-use once_cell::sync::Lazy;
-use serde::{Deserialize, Serialize};
 
-use states::{AppState, Tab};
+use states::{AppState};
 use messages::{loading_message, tabs_view, AppMessage};
 use persistence::Persistence;
 
@@ -78,7 +67,9 @@ impl iced::Application for ChefApp {
                     }
                     _ => {}
                 }
-                Command::none()
+                // Command::single(Self::load());
+                // Command::none()
+                Self::load()
             }
             ChefApp::Loaded(state) => {
                 let mut saved = false;
@@ -122,7 +113,7 @@ impl iced::Application for ChefApp {
         match self {
             ChefApp::Loading => loading_message(),
             ChefApp::Loaded(AppState{
-                    inventory,
+                    // inventory,
                     current_tab,
                     ..
             }) => {

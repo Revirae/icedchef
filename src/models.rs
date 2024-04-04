@@ -9,6 +9,7 @@ pub struct Inventory {
     food: Vec<Food>,
     recipes: Vec<Recipe>,
     portions: Vec<Portion>,
+    #[allow(dead_code)]
     #[serde(skip)]
     state: InventoryState,
 }

@@ -1,9 +1,9 @@
 use iced::alignment;
 use iced::widget::{
-    button, column, container, row, text, text_input, Column, Text
+    container, text, Column, Text
 };
 use iced::{
-    Alignment, Command, Element, Length
+    Element, Length
 };
 use iced_aw::native::{tabs, tab_bar};
 use crate::persistence::Persistence;
