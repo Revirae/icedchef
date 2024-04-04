@@ -2,8 +2,10 @@ use uuid::Uuid;
 use serde::{Deserialize, Serialize};
 use crate::states::InventoryState;
 
-#[derive(Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, Default, Clone, Serialize, Deserialize)]
 pub struct Inventory {
+    #[serde(default = "Uuid::new_v4")]
+    id: Uuid,
     food: Vec<Food>,
     recipes: Vec<Recipe>,
     portions: Vec<Portion>,

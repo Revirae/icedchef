@@ -1,23 +1,21 @@
 use serde::{Deserialize, Serialize};
 
-use crate::models::{Food, Portion, Recipe};
+use crate::models::{Food, Inventory, Portion, Recipe};
 use crate::errors::{LoadError, SaveError};
 
 
 #[derive(Default, Debug, Clone, Deserialize, Serialize)]
-pub struct InventoryPersistence {
-    pub food: Vec<Food>,
-    pub recipes: Vec<Recipe>,
-    pub portions: Vec<Portion>,
+pub struct Persistence {
+    pub inventory: Inventory
 }
 
-impl InventoryPersistence {
+impl Persistence {
     fn path() -> std::path::PathBuf {
         let mut path = std::env::current_dir().unwrap_or_default();
         path.push("chef.json");
         path
     }
-    pub async fn load() -> Result<InventoryPersistence, LoadError> {
+    pub async fn load() -> Result<Persistence, LoadError> {
         use async_std::prelude::*;
         let mut contents = String::new();
         let mut file = async_std::fs::File::open(

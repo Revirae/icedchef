@@ -5,13 +5,14 @@ mod persistence;
 mod messages;
 mod errors;
 
+use iced::advanced::Text;
 use iced::widget::{
     text, text_input,
     button,
     column, row, container
 };
 use iced::{alignment, executor, keyboard, window};
-use iced::widget::{Text, Column};
+use iced::widget::Column;
 use iced::{
     Alignment, Command, Element,
     Length, Subscription,
@@ -20,9 +21,9 @@ use iced::{
 use once_cell::sync::Lazy;
 use serde::{Deserialize, Serialize};
 
-use states::AppState;
-use messages::{loading_message, AppMessage};
-use persistence::InventoryPersistence;
+use states::{AppState, Tab};
+use messages::{loading_message, tabs_view, AppMessage};
+use persistence::Persistence;
 
 fn main() -> iced::Result {
     #[cfg(not(target_arch = "wasm32"))]
@@ -35,7 +36,7 @@ fn main() -> iced::Result {
 enum ChefApp {
     #[default]
     Loading,
-    Loaded(AppState)
+    Loaded(AppState),
 }
 
 impl iced::Application for ChefApp {
@@ -48,7 +49,7 @@ impl iced::Application for ChefApp {
         (
             ChefApp::Loading,
             Command::perform(
-                InventoryPersistence::load(),
+                Persistence::load(),
                 Self::Message::Loaded
             )
         )
@@ -66,9 +67,7 @@ impl iced::Application for ChefApp {
                     AppMessage::Loaded(Ok(state)) => {
                         *self = ChefApp::Loaded(AppState
                         {
-                            food: state.food,
-                            recipes: state.recipes,
-                            portions: state.portions,
+                            inventory: state.inventory,
                             ..AppState::default()
                         });
                     }
@@ -91,8 +90,9 @@ impl iced::Application for ChefApp {
                         saved = true;
                         Command::none()
                     }
-                    AppMessage::InventoryMessage(affected, message) => {
-                        todo!()
+                    AppMessage::SelectTab(tab) => {
+                        state.current_tab = tab;
+                        Command::none()
                     }
                 };
 
@@ -105,10 +105,8 @@ impl iced::Application for ChefApp {
                     state.saving = true;
 
                     Command::perform(
-                        InventoryPersistence {
-                            food: state.food.clone(),
-                            recipes: state.recipes.clone(),
-                            portions: state.portions.clone()
+                        Persistence {
+                            inventory: state.inventory.clone(),
                         }.save(),
                         AppMessage::Saved,
                     )
@@ -123,22 +121,12 @@ impl iced::Application for ChefApp {
     fn view(&self) -> Element<AppMessage> {
         match self {
             ChefApp::Loading => loading_message(),
-            ChefApp::Loaded(AppState
-             {
-                    food,
+            ChefApp::Loaded(AppState{
+                    inventory,
+                    current_tab,
                     ..
-                }) => {
-                    let title = text("Chef")
-                        .width(Length::Fill)
-                        .size(85)
-                        .horizontal_alignment(alignment::Horizontal::Center);
-
-                    //----
-                    let content = column![title]
-                        .spacing(20)
-                        .max_width(800);
-
-                    container(content).padding(40).center_x().into()
+            }) => {
+                    tabs_view(current_tab)
                 }
         }
     }
@@ -147,11 +135,9 @@ impl iced::Application for ChefApp {
 impl ChefApp {
     fn load() -> Command<AppMessage> {
         Command::perform(
-            InventoryPersistence::load(),
+            Persistence::load(),
             AppMessage::Loaded
         )
     }
 }
 
-
-//-------

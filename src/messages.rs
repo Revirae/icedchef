@@ -1,27 +1,22 @@
 use iced::alignment;
 use iced::widget::{
-    text, text_input,
-    button,
-    column, row, container
+    button, column, container, row, text, text_input, Column, Text
 };
 use iced::{
     Alignment, Command, Element, Length
 };
-use uuid::Uuid;
-use crate::persistence::InventoryPersistence;
+use iced_aw::native::{tabs, tab_bar};
+use crate::persistence::Persistence;
 use crate::errors::{LoadError, SaveError};
+use crate::states::{self, Tab};
 
 #[derive(Debug, Clone)]
 pub enum AppMessage {
-    Loaded(Result<InventoryPersistence, LoadError>),
+    Loaded(Result<Persistence, LoadError>),
     Saved(Result<(), SaveError>),
-    InventoryMessage(Vec<Uuid>, InventoryMessage),
+    SelectTab(states::Tab)
 }
 
-#[derive(Debug, Clone)]
-pub enum InventoryMessage {
-    Delete,
-}
 pub fn loading_message<'a>()
     -> Element<'a, AppMessage> {
         container(
@@ -34,3 +29,21 @@ pub fn loading_message<'a>()
         .center_y()
         .into()
 }
+
+pub fn tabs_view<'a>(this_tab: &Tab)
+    -> Element<'a, AppMessage> {
+        let tabs_data: Vec<(Tab, &str)> = vec![
+            (Tab::Food, "Alimentos"),
+            (Tab::Recipe, "Receitas"),
+        ];
+        let mut tabs = tabs::Tabs::new(AppMessage::SelectTab);
+        for (tab, title) in tabs_data.into_iter() {
+            tabs = tabs.push(
+                tab,
+                tab_bar::TabLabel::Text(title.to_string()),
+                Text::new(title));
+        }
+
+        tabs = tabs.set_active_tab(&this_tab);
+        Column::new().push(tabs).into()
+    }
