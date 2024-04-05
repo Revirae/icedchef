@@ -1,4 +1,4 @@
-use crate::models::{Inventory};
+use crate::models::{FoodForm, Inventory};
 
 
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
@@ -11,6 +11,7 @@ pub enum Tab {
 #[derive(Default, Debug)]
 pub struct AppState {
     pub inventory: Inventory,
+    pub food_form: FoodForm,
     pub current_tab: Tab,
     pub dirty: bool,
     pub saving: bool

@@ -4,14 +4,15 @@ mod models;
 mod persistence;
 mod messages;
 mod errors;
+mod views;
 
 use iced::{
     Command, Element,
     Application, Settings
 };
 
-use states::{AppState};
-use messages::{loading_message, tabs_view, AppMessage};
+use states::AppState;
+use messages::AppMessage;
 use persistence::Persistence;
 
 fn main() -> iced::Result {
@@ -85,6 +86,9 @@ impl iced::Application for ChefApp {
                         state.current_tab = tab;
                         Command::none()
                     }
+                    _ => {
+                        Command::none()
+                    }
                 };
 
                 if !saved {
@@ -111,13 +115,9 @@ impl iced::Application for ChefApp {
     }
     fn view(&self) -> Element<AppMessage> {
         match self {
-            ChefApp::Loading => loading_message(),
-            ChefApp::Loaded(AppState{
-                    // inventory,
-                    current_tab,
-                    ..
-            }) => {
-                    tabs_view(current_tab)
+            ChefApp::Loading => views::loading(),
+            ChefApp::Loaded(appstate) => {
+                    views::spa(appstate)
                 }
         }
     }
